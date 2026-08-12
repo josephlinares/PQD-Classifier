@@ -1,0 +1,22 @@
+compile_metrics: 6.25
+accuracy: 0.0
+macro_f1: 0.0
+weighted_f1: 0.0
+classification_report: "                        precision    recall  f1-score   support\n\
+  \n               Flicker       0.00      0.00      0.00        48\n     Flicker+Harmonics\
+  \       0.00      0.00      0.00        48\n           Flicker+Sag       0.00  \
+  \    0.00      0.00        48\n         Flicker+Swell       0.00      0.00     \
+  \ 0.00        48\n             Harmonics       0.00      0.00      0.00        48\n\
+  \   Impulsive Transient       0.00      0.00      0.00        48\n          Interruption\
+  \       0.00      0.00      0.00        48\nInterruption+Harmonics       0.00  \
+  \    0.00      0.00        48\n                Normal       0.00      0.00     \
+  \ 0.00        48\n                 Notch       0.00      0.00      0.00        48\n\
+  \ Oscillatory transient       0.00      0.00      0.00        48\n             \
+  \      Sag       0.00      0.00      0.00        48\n         Sag+Harmonics    \
+  \   0.00      0.00      0.00        48\n                 Spike       0.00      0.00\
+  \      0.00        48\n                 Swell       0.00      0.00      0.00   \
+  \     48\n       Swell+Harmonics       0.00      0.00      0.00        48\n\n  \
+  \           micro avg       0.00      0.00      0.00       768\n             macro\
+  \ avg       0.00      0.00      0.00       768\n          weighted avg       0.00\
+  \      0.00      0.00       768\n           samples avg       0.00      0.00   \
+  \   0.00       768\n"

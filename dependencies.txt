@@ -1,0 +1,4 @@
+py -3.12 -m venv .venv
+
+
+tensorflow keras scipy numpy pandas matplotlib seaborn scikit-learn ai-edge-litert PyYAML
