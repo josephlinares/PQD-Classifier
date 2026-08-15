@@ -12,7 +12,7 @@ import utils
 # In the future, hyperparameter tuning?
 
 def train(model, config, X_train, Y_train, X_test, Y_test):
-    callback = keras.callbacks.LearningRateScheduler(model.scheduler)
+    callback = keras.callbacks.LearningRateScheduler(scheduler)
     history = model.fit(X_train, Y_train,
                         batch_size=config['batch_size'],
                         epochs=config['epochs'],
@@ -22,6 +22,18 @@ def train(model, config, X_train, Y_train, X_test, Y_test):
 
     print('Successfully trained the model')
     return model
+
+def scheduler(self, epoch):
+    """
+    Compute the learning rate for the current epoch
+    """
+    dropEvery = 10
+    initAlpha = 0.001
+    factor = 0.5
+    exp = np.floor((1 + epoch) / dropEvery)
+    alpha = initAlpha * (factor ** exp)
+    print('lr =', alpha)
+    return float(alpha)
 
 def evaluate(model, X_test, Y_test, categories, path : Path = None):
     metrics = dict()
