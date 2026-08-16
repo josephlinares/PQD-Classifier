@@ -1,19 +1,20 @@
 import yaml
 from pathlib import Path
 
-import utils
+from utils import get_config_path
 
-def get_config_path(config_path=None, filename=None):
-    """Return config.yaml path object"""
-    if config_path:
-        return Path(config_path) / filename
+def load_config(filename : str='config.yaml') -> dict:
+    '''Loads experiment configuration file
     
-    # If no path is received, returns /path/to/script/config.yaml
-    return Path(__file__).parent / filename
-
-def load_config(filename='config.yaml') -> dict:
-    print("Reading yaml config")
-    path = get_config_path(utils.SRC_DIR, filename)
+    Parameters:
+    filename (str): Name of the config file
+    
+    Returns:
+    dict: Configuration dictionary
+    
+    '''
+    print("Reading config yaml")
+    path = get_config_path(filename)
 
     if not path.exists():
         raise FileNotFoundError(f"Config file not found at {path}")
@@ -25,8 +26,13 @@ def load_config(filename='config.yaml') -> dict:
             raise ValueError(f"Config file cannot be parsed: {exc}")
 
 
-def log_config(config, config_path):
-    """Export data to a YAML file"""
+def log_config(config, config_path: Path):
+    '''Export data to a YAML file
+    
+    Parameters:
+    config (dict): Config dictionary to log
+    config_path (Path): Path to folder
+    '''
     config_path = config_path / 'config.yaml'
 
     with open(config_path, 'w') as file:

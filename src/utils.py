@@ -11,7 +11,18 @@ SRC_DIR = PROJECT_ROOT / "src"
 MODELS_DIR = PROJECT_ROOT / "models"
 #OUTPUT_DIR = DATA_DIR / "output"
 
-def timestamp_dir():
+def get_config_path(filename: str=None):
+    '''Returns path of experiment configuration
+
+    Parameters:
+    filename (str): configuration filename
+    '''
+    return SRC_DIR / filename
+
+def set_timestamp_dir():
+    '''Creates a directory named run_MM_DD-HH_MM
+    under models/ for experiment logging
+    '''
     now = datetime.now().strftime('%m_%d-%H_%M')
     experiment_name = f'run_{now}'
 

@@ -1,8 +1,10 @@
 import numpy as np
 import keras
-from keras.layers import Input, Conv1D, MaxPool1D, BatchNormalization, GlobalMaxPooling1D, Flatten, Dense
 from keras import Sequential
+from keras.layers import Input, Conv1D, MaxPool1D, BatchNormalization, GlobalMaxPooling1D, Flatten, Dense
+from keras.optimizers import Nadam, AdamW, SGD
 
+# Not supported at the time
 class LiteratureCNN(keras.Model):
     """Keras Model for 1D-CNN described in
     open-source dataset generator paper"""
@@ -59,17 +61,24 @@ class LiteratureCNN(keras.Model):
         return self.architecture(inputs)
 
 def build_model(cfg: dict):
-    if cfg['optimizer'] == 'nadam':
-        optimizer = keras.optimizers.Nadam(learning_rate=1e-3)
+    # learning rates and weight decays should be passed in optimizers
+    optimizer_config = cfg['optimizer']
+
+    if optimizer_config == 'nadam':
+        optimizer = Nadam()
+    elif optimizer_config == 'adamw':
+        optimizer = AdamW()
+    else:
+        optimizer = SGD()
+
     if cfg['loss_function'] == 'cross-entropy':
         loss_function = 'categorical_crossentropy'
     if cfg['name'] == 'LiteratureCNN':
         model = literature_cnn(
-        cfg['num_classes'], 
         cfg['input_shape'],
+        cfg['outputs'], 
         cfg['kernel_size'],
-        cfg['stride'],
-        cfg['learning_rate'])
+        cfg['stride'])
 
         model.compile(loss=loss_function,
                       optimizer=optimizer,
@@ -77,10 +86,10 @@ def build_model(cfg: dict):
 
     return model
 
-def literature_cnn(num_classes: int = 16, input_shape: int = 533, 
-                 k_size: int = 3, stride: int = 1, learning_rate: float = 0.01):
+def literature_cnn(input_shape: tuple=(533, 1), outputs: int=16, 
+                   k_size: int = 3, stride: int = 1):
     model = Sequential([
-        Input(shape=(input_shape, 1)),
+        Input(shape=input_shape),
         Conv1D(filters=32, kernel_size=k_size, strides=stride, activation='relu'),
         Conv1D(filters = 32, kernel_size=k_size, strides=stride, activation='relu'),
         MaxPool1D(pool_size=3, strides = 1),
@@ -95,6 +104,6 @@ def literature_cnn(num_classes: int = 16, input_shape: int = 533,
         Dense(units=256, activation='relu',use_bias=True),
         Dense(units=128, activation='relu',use_bias=True),
         BatchNormalization(),
-        Dense(units=num_classes, activation='softmax',use_bias=True)
+        Dense(units=outputs, activation='softmax',use_bias=True)
     ])
     return model

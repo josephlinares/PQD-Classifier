@@ -1,4 +1,3 @@
-import keras.models
 from pathlib import Path
 
 def save_model_weights(model, filepath : Path):
