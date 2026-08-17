@@ -9,8 +9,6 @@ settings = load_config('base_config.yaml')
 utils.print_dictionary(settings)
 
 X_train, Y_train, X_test, Y_test, encoder, metadata = loadMatlabDataset(settings['dataset'])
-print(X_train.shape)
-print(Y_test)
 
 model_cfg = settings['model']
 model_cfg.update({'input_shape': (metadata['observations'], 1), 'outputs': metadata['classes']})
@@ -22,6 +20,6 @@ log_config(settings, experiment_path)
 
 model = build_model(settings['model'])
 model = train(model, settings['training'], X_train, Y_train, X_test, Y_test, experiment_path)
-model = evaluate(model, X_test, Y_test, metadata['categories'], experiment_path)
+evaluate(model, X_test, Y_test, metadata['categories'], experiment_path)
 
 save_model_weights(model, experiment_path)

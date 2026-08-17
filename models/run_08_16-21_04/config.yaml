@@ -1,0 +1,37 @@
+model:
+  name: LiteratureCNN
+  kernel_size: 3
+  stride: 1
+  schedule: scheduler
+  optimizer: adamw
+  loss_function: cross-entropy
+  input_shape: !!python/tuple
+  - 533
+  - 1
+  outputs: 16
+  categories:
+  - Flicker
+  - Flicker+Harmonics
+  - Flicker+Sag
+  - Flicker+Swell
+  - Harmonics
+  - Impulsive Transient
+  - Interruption
+  - Interruption+Harmonics
+  - Normal
+  - Notch
+  - Oscillatory transient
+  - Sag
+  - Sag+Harmonics
+  - Spike
+  - Swell
+  - Swell+Harmonics
+training:
+  batch_size: 64
+  epochs: 43
+  learning_rate: 0.001
+  seed: 42
+dataset:
+  filename: C:\Users\nxf93627\PQD Classifier\data\16pqd_2000pattern_60hz_10cycle_withNoise.mat
+  seed_random: 42
+  test_percentage: 0.1

@@ -55,3 +55,8 @@ def encodeDataset(labels):
 
     print(f'Successfully encoded {len(encoder.categories_[0])} categories')
     return encoded_labels, encoder
+
+def scale_dataset(X_test):
+    X_scaled = (X_test - X_test.min()) / (X_test.max() - X_test.min())
+    X_scaled *= 255.0
+    return np.array(X_scaled, dtype=np.uint8)

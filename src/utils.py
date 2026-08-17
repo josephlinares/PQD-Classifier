@@ -34,3 +34,29 @@ def set_timestamp_dir():
 def print_dictionary(dictionary: dict = {}):
     for key, value in dictionary.items():
         print(f'{key}: {value}')
+
+def create_markdown(results : list, path : Path):
+    '''Writes a MarkDown file for experimentation results
+
+    Parameters:
+    results (list): Macro F1 and Classification in MD format
+    path (Path): Experimentation path where this will be stored
+    '''
+    with open(path / "README.md", "w", encoding="utf-8") as file:
+        print("# Experimentation results\n", file=file)
+        print(results[0], '\n', file=file)
+        print(results[1], '\n', file=file)
+        print('![Confusion Matrix](<confusion matrix.png>)\n', file=file)
+        print('# Annotations\n', file=file)
+
+def get_file_size(file_path):
+    size = os.path.getsize(file_path)
+    return size
+    
+def convert_bytes(size, unit=None):
+    if unit == "KB":
+        return print('File size: ' + str(round(size / 1024, 3)) + ' Kilobytes')
+    elif unit == "MB":
+        return print('File size: ' + str(round(size / (1024 * 1024), 3)) + ' Megabytes')
+    else:
+        return print('File size: ' + str(size) + ' bytes')
