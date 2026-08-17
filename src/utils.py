@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -9,7 +10,10 @@ PROJECT_ROOT = UTILS_DIR.parent
 DATA_DIR = PROJECT_ROOT / "data"
 SRC_DIR = PROJECT_ROOT / "src"
 MODELS_DIR = PROJECT_ROOT / "models"
-#OUTPUT_DIR = DATA_DIR / "output"
+CONFIG_DIR = PROJECT_ROOT / "configs"
+
+def get_config_name() -> str:
+    return sys.argv[1]
 
 def get_config_path(filename: str=None):
     '''Returns path of experiment configuration
@@ -17,7 +21,7 @@ def get_config_path(filename: str=None):
     Parameters:
     filename (str): configuration filename
     '''
-    return SRC_DIR / filename
+    return CONFIG_DIR / filename
 
 def set_timestamp_dir():
     '''Creates a directory named run_MM_DD-HH_MM

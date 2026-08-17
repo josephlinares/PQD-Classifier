@@ -11,6 +11,6 @@ training:
   learning_rate: 0.001
   seed: 42
 dataset:
-  filename: 'C:\Users\nxf93627\PQD Classifier\data\16pqd_480pattern_50hz_10cycle_noNoise.mat'
+  filename: 'C:\Users\nxf93627\PQD Classifier\data\16pqd_2000pattern_60hz_10cycle_withNoise.mat'
   seed_random: 42
   test_percentage: 0.10

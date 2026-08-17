@@ -11,7 +11,7 @@ import os
 from conversion import convert_to_tflite
 from checkpoint import save_model_tflite
 
-settings = load_config('base_config.yaml')
+settings = load_config()
 utils.print_dictionary(settings)
 
 X_train, Y_train, X_test, Y_test, encoder, metadata = loadMatlabDataset(settings['dataset'])

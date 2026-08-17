@@ -1,9 +1,9 @@
 import yaml
 from pathlib import Path
 
-from utils import get_config_path
+from utils import get_config_path, get_config_name
 
-def load_config(filename : str='config.yaml') -> dict:
+def load_config() -> dict:
     '''Loads experiment configuration file
     
     Parameters:
@@ -14,6 +14,7 @@ def load_config(filename : str='config.yaml') -> dict:
     
     '''
     print("Reading config yaml")
+    filename = get_config_name()
     path = get_config_path(filename)
 
     if not path.exists():
