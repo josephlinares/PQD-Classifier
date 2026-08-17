@@ -12,7 +12,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 MODELS_DIR = PROJECT_ROOT / "models"
 CONFIG_DIR = PROJECT_ROOT / "configs"
 
-def get_config_name() -> str:
+def get_first_arg() -> str:
     return sys.argv[1]
 
 def get_config_path(filename: str=None):

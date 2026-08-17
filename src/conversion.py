@@ -3,7 +3,7 @@ import tensorflow as tf
 
 def make_representative_dataset(X_train):
     def representative_dataset():
-        for i in range(256):
+        for i in range(512):
             yield [X_train[i:i+1].astype(np.float32)]
     return representative_dataset
 

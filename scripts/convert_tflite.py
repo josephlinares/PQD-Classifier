@@ -22,7 +22,7 @@ model_cfg.update({'categories' : (metadata['categories'])})
 
 utils.print_dictionary(model_cfg)
 
-weights_path = utils.MODELS_DIR / 'run_08_16-20_33' / 'model.weights.h5'
+weights_path = utils.MODELS_DIR / 'run_08_17-16_32' / 'model.weights.h5'
 experiment_path = utils.set_timestamp_dir()
 model_path = experiment_path / "model.tflite"
 log_config(settings, experiment_path)
