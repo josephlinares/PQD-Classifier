@@ -1,13 +1,14 @@
 import numpy as np
-from keras.callbacks import LearningRateScheduler
+import pandas as pd
+import tensorflow as tf
 import seaborn as sns
-import yaml
 
-from sklearn.metrics import f1_score, classification_report, accuracy_score, confusion_matrix
-from matplotlib import pyplot as plt
 from pathlib import Path
+from matplotlib import pyplot as plt
+from sklearn.metrics import f1_score, classification_report, accuracy_score, confusion_matrix
+from keras.callbacks import LearningRateScheduler
 
-import utils
+from utils import create_markdown
 
 # Default initial learning rate
 def create_lr_schedule(cfg: dict):
@@ -48,19 +49,6 @@ def train(model, config, X_train, Y_train, X_test, Y_test, path : Path = None):
         plt.savefig(path / 'training accuracy.png')
     print('Successfully trained the model')
     return model
-
-def create_markdown(results : list, path : Path):
-    '''Writes a MarkDown file for experimentation results
-
-    Parameters:
-    results (list): Macro F1 and Classification in MD format
-    path (Path): Experimentation path where this will be stored
-    '''
-    with open(path / "README.md", "w", encoding="utf-8") as file:
-        print("# Experimentation results\n", file=file)
-        print(results[0], '\n', file=file)
-        print(results[1], '\n', file=file)
-        print('# Annotations\n', file=file)
         
 def get_macrof1(Y_test, Y_pred, categories):
     '''Evaluate Macro F1 and Classification metrics of predictions
@@ -96,6 +84,27 @@ def get_macrof1(Y_test, Y_pred, categories):
     
     return [macrof_df.to_markdown(), report_df.to_markdown()]
 
+def save_confusion_matrix(confusion, categories, path : Path):
+    plt.figure(figsize=(6, 6))
+    sns.heatmap(
+        confusion,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=categories,
+        yticklabels=categories
+    )
+
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title("Confusion Matrix")
+    plt.xticks(rotation=45, ha="right")
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(path / 'confusion matrix.png')
+
+    print('Successfully wrote \'confusion matrix.png\'')
+
 def evaluate(model, X_test, Y_test, categories, path : Path = None):
     '''Evaluate Keras model and print confusion matrix
     
@@ -106,34 +115,42 @@ def evaluate(model, X_test, Y_test, categories, path : Path = None):
     categories (): Categories names
     path (Path): Optional path to save the results
     '''
-    score = model.evaluate(X_test, Y_test, verbose=0)
-    
+    print('Evaluating Keras model')
+    model.evaluate(X_test, Y_test, verbose=0)
     Y_pred = np.round(model.predict(X_test))
-    results = get_macrof1(Y_test, Y_pred, categories)
+    
+    mf1 = get_macrof1(Y_test, Y_pred, categories)
+    cm = confusion_matrix(np.argmax(Y_test, axis=1), np.argmax(Y_pred, axis=1))
 
     if path:
-        create_markdown(results, path)
+        create_markdown(mf1, path)
+        save_confusion_matrix(cm, categories, path)
 
-        cm = confusion_matrix(np.argmax(Y_test, axis=1), np.argmax(Y_pred, axis=1))
+def evaluate_tflite(interpreter, X_test, Y_test, shape_cfg : dict, path : Path=None):
+    print('Evaluating TFLite model')
+    
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
 
-        plt.figure(figsize=(7, 7))
-        sns.heatmap(
-            cm,
-            annot=True,
-            fmt="d",
-            cmap="Blues",
-            xticklabels=categories,
-            yticklabels=categories
-        )
+    tensor_input_shape = (X_test.shape[0],)
+    tensor_input_shape =  tensor_input_shape + shape_cfg['input_shape']
+    tensor_output_shape = (X_test.shape[0], shape_cfg['outputs'])
 
-        plt.xlabel("Predicted Label")
-        plt.ylabel("True Label")
-        plt.title("Confusion Matrix: 1D-CNN")
-        plt.xticks(rotation=45, ha="right")
-        plt.yticks(rotation=0)
-        plt.tight_layout()
-        plt.savefig(path / 'confusion matrix.png')
+    interpreter.resize_tensor_input(input_details[0]['index'], tensor_input_shape)
+    interpreter.resize_tensor_input(output_details[0]['index'], tensor_output_shape)
+    interpreter.allocate_tensors()
 
-        print('Successfully wrote \'confusion matrix.png\'')
+    interpreter.set_tensor(input_details[0]['index'], X_test)
+    interpreter.invoke()
 
-    return model
+    Y_pred = interpreter.get_tensor(output_details[0]['index'])
+    Y_pred = np.argmax(Y_pred, axis=1)
+    Y_test = np.argmax(Y_test, axis=1)
+    categories = shape_cfg['categories']
+
+    mf1 = get_macrof1(Y_test, Y_pred, categories)
+    cm = confusion_matrix(Y_test, Y_pred)
+    
+    if path:
+        create_markdown(mf1, path)
+        save_confusion_matrix(cm, categories, path)
